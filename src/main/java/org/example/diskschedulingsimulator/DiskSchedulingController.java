@@ -412,49 +412,63 @@ public class DiskSchedulingController {
         double canvasWidth = visualizationCanvas.getWidth();
         double canvasHeight = visualizationCanvas.getHeight();
         
+        // 绘制背景
+        gc.setFill(Color.web("#f8f9fa"));
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        
         // 设置坐标轴
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1.5);
-        gc.strokeLine(50, canvasHeight - 50, canvasWidth - 50, canvasHeight - 50); // X轴
+        gc.setStroke(Color.web("#34495e"));
+        gc.setLineWidth(2);
+        gc.strokeLine(50, canvasHeight - 50, canvasWidth - 30, canvasHeight - 50); // X轴
         gc.strokeLine(50, 50, 50, canvasHeight - 50); // Y轴
         
         // 添加坐标轴标签
-        gc.setFill(Color.BLACK);
+        gc.setFill(Color.web("#2c3e50"));
+        gc.setFont(new javafx.scene.text.Font("Microsoft YaHei", 14));
         gc.fillText("磁道号", canvasWidth / 2, canvasHeight - 20);
-        gc.fillText("时间/步骤", 10, canvasHeight / 2);
         
-        // 主刻度 - 每250个磁道一个刻度
-        for (int i = 0; i <= 1500; i += 250) {
-            double x = 50 + (i / 1500.0) * (canvasWidth - 100);
-            gc.setLineWidth(1.5);
+        // 旋转文字绘制Y轴标签
+        gc.save();
+        gc.translate(20, canvasHeight / 2);
+        gc.rotate(-90);
+        gc.fillText("时间/步骤", 0, 0);
+        gc.restore();
+        
+        // 绘制网格背景
+        gc.setStroke(Color.web("#ecf0f1"));
+        gc.setLineWidth(0.5);
+        
+        // 水平网格线
+        for (int i = 0; i <= 1500; i += 150) {
+            double x = 50 + (i / 1500.0) * (canvasWidth - 80);
+            gc.strokeLine(x, 50, x, canvasHeight - 50);
+        }
+        
+        // 垂直网格线
+        int verticalLines = 10;
+        for (int i = 0; i < verticalLines; i++) {
+            double y = 50 + (i * (canvasHeight - 100) / verticalLines);
+            gc.strokeLine(50, y, canvasWidth - 30, y);
+        }
+        
+        // 主刻度 - 每300个磁道一个刻度
+        gc.setStroke(Color.web("#34495e"));
+        gc.setLineWidth(1.5);
+        gc.setFont(new javafx.scene.text.Font("Microsoft YaHei", 12));
+        for (int i = 0; i <= 1500; i += 300) {
+            double x = 50 + (i / 1500.0) * (canvasWidth - 80);
             gc.strokeLine(x, canvasHeight - 50, x, canvasHeight - 40);
             gc.fillText(String.valueOf(i), x - 15, canvasHeight - 25);
         }
         
-        // 次刻度 - 每50个磁道一个小刻度
-        gc.setLineWidth(0.5);
-        for (int i = 50; i < 1500; i += 50) {
-            if (i % 250 != 0) { // 避免与主刻度重复
-                double x = 50 + (i / 1500.0) * (canvasWidth - 100);
+        // 次刻度 - 每150个磁道一个小刻度
+        gc.setLineWidth(0.8);
+        for (int i = 150; i < 1500; i += 150) {
+            if (i % 300 != 0) { // 避免与主刻度重复
+                double x = 50 + (i / 1500.0) * (canvasWidth - 80);
                 gc.strokeLine(x, canvasHeight - 50, x, canvasHeight - 45);
+                gc.fillText(String.valueOf(i), x - 10, canvasHeight - 25);
             }
-        }
-        
-        // 添加网格线以便更好地读取数据
-        gc.setStroke(Color.LIGHTGRAY);
-        gc.setLineWidth(0.3);
-        
-        // 水平网格线
-        for (int i = 0; i <= 1500; i += 250) {
-            double x = 50 + (i / 1500.0) * (canvasWidth - 100);
-            gc.strokeLine(x, 50, x, canvasHeight - 50);
-        }
-        
-        // 垂直网格线 - 根据画布高度均匀分布
-        int verticalLines = 10;
-        for (int i = 1; i < verticalLines; i++) {
-            double y = 50 + (i * (canvasHeight - 100) / verticalLines);
-            gc.strokeLine(50, y, canvasWidth - 50, y);
         }
     }
     
@@ -462,39 +476,65 @@ public class DiskSchedulingController {
         List<Integer> sequence = result.getSeekSequence();
         if (sequence.size() <= 1) return;
         
-        gc.setStroke(Color.BLUE);
-        gc.setLineWidth(2);
-        
         double canvasWidth = visualizationCanvas.getWidth();
         double canvasHeight = visualizationCanvas.getHeight();
         
+        // 绘制轨迹线
+        gc.setStroke(Color.web("#3498db"));
+        gc.setLineWidth(2.5);
+        
         for (int i = 0; i < sequence.size() - 1; i++) {
-            double x1 = 50 + (sequence.get(i) / 1500.0) * (canvasWidth - 100);
+            double x1 = 50 + (sequence.get(i) / 1500.0) * (canvasWidth - 80);
             double y1 = canvasHeight - 100 - (i / (double)(sequence.size() - 1)) * (canvasHeight - 150);
             
-            double x2 = 50 + (sequence.get(i + 1) / 1500.0) * (canvasWidth - 100);
+            double x2 = 50 + (sequence.get(i + 1) / 1500.0) * (canvasWidth - 80);
             double y2 = canvasHeight - 100 - ((i + 1) / (double)(sequence.size() - 1)) * (canvasHeight - 150);
             
             gc.strokeLine(x1, y1, x2, y2);
-            
-            gc.setFill(Color.RED);
-            gc.fillOval(x1 - 2, y1 - 2, 4, 4);
         }
         
-        // 最后一个点
-        double lastX = 50 + (sequence.get(sequence.size()-1) / 1500.0) * (canvasWidth - 100);
-        double lastY = canvasHeight - 100 - ((sequence.size()-1) / (double)(sequence.size() - 1)) * (canvasHeight - 150);
-        gc.setFill(Color.RED);
-        gc.fillOval(lastX - 2, lastY - 2, 4, 4);
+        // 绘制轨迹点
+        for (int i = 0; i < sequence.size(); i++) {
+            double x = 50 + (sequence.get(i) / 1500.0) * (canvasWidth - 80);
+            double y = canvasHeight - 100 - (i / (double)(sequence.size() - 1)) * (canvasHeight - 150);
+            
+            // 绘制点的阴影效果
+            gc.setFill(Color.web("#34495e", 0.3));
+            gc.fillOval(x - 4, y - 4 + 2, 8, 8);
+            
+            // 绘制实际点
+            gc.setFill(Color.web("#e74c3c"));
+            gc.fillOval(x - 4, y - 4, 8, 8);
+        }
+        
+        // 标记起始点
+        double startX = 50 + (sequence.get(0) / 1500.0) * (canvasWidth - 80);
+        double startY = canvasHeight - 100 - (0 / (double)(sequence.size() - 1)) * (canvasHeight - 150);
+        gc.setFill(Color.web("#2ecc71"));
+        gc.fillOval(startX - 6, startY - 6, 12, 12);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(1.5);
+        gc.strokeOval(startX - 6, startY - 6, 12, 12);
     }
     
     private void drawStatistics(GraphicsContext gc, SchedulingResult result) {
-        gc.setFill(Color.BLACK);
-        // 将统计信息移到画布右上角，并调整间距
         double canvasWidth = visualizationCanvas.getWidth();
-        gc.fillText("算法: " + result.getAlgorithmName(), canvasWidth - 400, 30);
-        gc.fillText("总寻道距离: " + result.getTotalSeekDistance(), canvasWidth - 400, 50);
-        gc.fillText("平均寻道时间: " + String.format("%.2f", result.getAverageSeekTime()), canvasWidth - 400, 70);
+        
+        // 绘制半透明背景面板
+        gc.setFill(Color.web("#ffffff", 0.85));
+        gc.fillRoundRect(canvasWidth - 250, 10, 220, 100, 10, 10);
+        gc.setStroke(Color.web("#bdc3c7"));
+        gc.setLineWidth(1);
+        gc.strokeRoundRect(canvasWidth - 250, 10, 220, 100, 10, 10);
+        
+        // 设置文本样式
+        gc.setFill(Color.web("#2c3e50"));
+        gc.setFont(new javafx.scene.text.Font("Microsoft YaHei", 14));
+        gc.fillText("算法: " + result.getAlgorithmName(), canvasWidth - 230, 35);
+        
+        gc.setFont(new javafx.scene.text.Font("Microsoft YaHei", 13));
+        gc.fillText("总寻道距离: " + result.getTotalSeekDistance(), canvasWidth - 230, 65);
+        gc.fillText("平均寻道时间: " + String.format("%.2f", result.getAverageSeekTime()), canvasWidth - 230, 95);
     }
     
     private void addResultToTable(SchedulingResult result) {

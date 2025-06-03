@@ -78,3 +78,48 @@
 .requests-text-area .content {
     -fx-background-color: #f8f8f8;
 }
+
+
+/* 选项卡样式 */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #34495e;
+    -fx-font-weight: normal;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-font-weight: bold;
+}
+
+/* 美化滑块 */
+.slider .track {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 5;
+}
+
+.slider .thumb {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 10;
+}
+
+/* 美化Canvas容器 */
+.canvas-container {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 10;
+}
