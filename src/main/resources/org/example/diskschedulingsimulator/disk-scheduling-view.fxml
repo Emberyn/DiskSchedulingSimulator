@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.diskschedulingsimulator.DiskSchedulingController">
+   <top>
+      <VBox spacing="10.0">
+         <children>
+            <Label styleClass="title-label" text="磁盘调度算法模拟器" />
+            <Separator />
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Label text="磁头初始位置:" />
+                  <TextField fx:id="initialPositionField" prefWidth="100.0" promptText="0-1499" />
+                  <Button fx:id="generateButton" onAction="#onGenerateRequests" text="生成请求" />
+                  <Separator orientation="VERTICAL" />
+                  <Label text="选择算法:" />
+                  <ComboBox fx:id="algorithmComboBox" prefWidth="150.0" />
+                  <Button fx:id="simulateButton" disable="true" onAction="#onSimulate" text="开始模拟" />
+                  <Button fx:id="simulateAllButton" onAction="#onSimulateAll" text="模拟所有" />
+                  <Button fx:id="resetButton" onAction="#onReset" text="重置" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="statusLabel" styleClass="status-label" text="就绪 - 点击生成请求开始" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </VBox>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.6" orientation="HORIZONTAL">
+         <items>
+            <VBox spacing="10.0">
+               <children>
+                  <Label text="可视化结果" styleClass="section-title" />
+                  <Canvas fx:id="visualizationCanvas" height="400.0" width="500.0" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <VBox spacing="10.0">
+               <children>
+                  <Label text="生成的请求" styleClass="section-title" />
+                  <TextArea fx:id="requestsTextArea" editable="false" prefHeight="150.0" />
+                  <Label text="算法比较结果" styleClass="section-title" />
+                  <TableView fx:id="resultsTable" prefHeight="200.0">
+                     <columns>
+                        <TableColumn fx:id="algorithmColumn" prefWidth="100.0" text="算法" />
+                        <TableColumn fx:id="totalDistanceColumn" prefWidth="80.0" text="总距离" />
+                        <TableColumn fx:id="averageTimeColumn" prefWidth="80.0" text="平均时间" />
+                     </columns>
+                  </TableView>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </items>
+      </SplitPane>
+   </center>
+</BorderPane>
