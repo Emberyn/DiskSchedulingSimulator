@@ -61,7 +61,7 @@
             <VBox spacing="10.0">
                <children>
                   <Label text="生成的请求" styleClass="section-title" />
-                  <TextArea fx:id="requestsTextArea" editable="false" prefHeight="150.0" />
+                  <TextArea fx:id="requestsTextArea" editable="false" prefHeight="200.0" wrapText="true" styleClass="requests-text-area" />
                   <Label text="算法比较结果" styleClass="section-title" />
                   <TableView fx:id="resultsTable" prefHeight="200.0">
                      <columns>

@@ -69,3 +69,12 @@
 .split-pane {
     -fx-background-color: transparent;
 }
+
+.requests-text-area {
+    -fx-font-family: monospace;
+    -fx-font-size: 11px;
+}
+
+.requests-text-area .content {
+    -fx-background-color: #f8f8f8;
+}

@@ -94,13 +94,58 @@ public class DiskSchedulingController {
             
             currentRequests = RequestGenerator.generateRequests();
             
+            // 创建请求分布统计
+            int range1Count = 0; // 0-499
+            int range2Count = 0; // 500-999
+            int range3Count = 0; // 1000-1499
+            
+            for (DiskRequest request : currentRequests) {
+                int track = request.getTrackNumber();
+                if (track < 500) range1Count++;
+                else if (track < 1000) range2Count++;
+                else range3Count++;
+            }
+            
+            // 构建请求显示文本
             StringBuilder sb = new StringBuilder();
             sb.append("生成了 ").append(currentRequests.size()).append(" 个磁盘请求:\n");
-            for (int i = 0; i < Math.min(10, currentRequests.size()); i++) {
-                sb.append(currentRequests.get(i).getTrackNumber()).append(" ");
+            sb.append("分布情况: 0-499: ").append(range1Count).append("个 (")
+              .append(String.format("%.1f%%", (range1Count * 100.0 / currentRequests.size())))
+              .append("), 500-999: ").append(range2Count).append("个 (")
+              .append(String.format("%.1f%%", (range2Count * 100.0 / currentRequests.size())))
+              .append("), 1000-1499: ").append(range3Count).append("个 (")
+              .append(String.format("%.1f%%", (range3Count * 100.0 / currentRequests.size())))
+              .append(")\n\n");
+            
+            // 分组显示所有请求
+            sb.append("0-499范围内的请求:\n");
+            int count = 0;
+            for (DiskRequest request : currentRequests) {
+                if (request.getTrackNumber() < 500) {
+                    sb.append(request.getTrackNumber()).append(" ");
+                    count++;
+                    if (count % 20 == 0) sb.append("\n"); // 每行显示20个请求
+                }
             }
-            if (currentRequests.size() > 10) {
-                sb.append("\n... 还有 ").append(currentRequests.size() - 10).append(" 个请求");
+            
+            sb.append("\n\n500-999范围内的请求:\n");
+            count = 0;
+            for (DiskRequest request : currentRequests) {
+                if (request.getTrackNumber() >= 500 && request.getTrackNumber() < 1000) {
+                    sb.append(request.getTrackNumber()).append(" ");
+                    count++;
+                    if (count % 20 == 0) sb.append("\n");
+                }
+            }
+            
+            sb.append("\n\n1000-1499范围内的请求:\n");
+            count = 0;
+            for (DiskRequest request : currentRequests) {
+                if (request.getTrackNumber() >= 1000) {
+                    sb.append(request.getTrackNumber()).append(" ");
+                    count++;
+                    if (count % 20 == 0) sb.append("\n");
+                }
             }
             
             requestsTextArea.setText(sb.toString());
