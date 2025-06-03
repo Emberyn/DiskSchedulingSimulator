@@ -412,16 +412,49 @@ public class DiskSchedulingController {
         double canvasWidth = visualizationCanvas.getWidth();
         double canvasHeight = visualizationCanvas.getHeight();
         
+        // 设置坐标轴
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-        gc.strokeLine(50, canvasHeight - 50, canvasWidth - 50, canvasHeight - 50);
-        gc.strokeLine(50, 50, 50, canvasHeight - 50);
+        gc.setLineWidth(1.5);
+        gc.strokeLine(50, canvasHeight - 50, canvasWidth - 50, canvasHeight - 50); // X轴
+        gc.strokeLine(50, 50, 50, canvasHeight - 50); // Y轴
         
-        // 简化刻度
-        for (int i = 0; i <= 1500; i += 500) {
+        // 添加坐标轴标签
+        gc.setFill(Color.BLACK);
+        gc.fillText("磁道号", canvasWidth / 2, canvasHeight - 20);
+        gc.fillText("时间/步骤", 10, canvasHeight / 2);
+        
+        // 主刻度 - 每250个磁道一个刻度
+        for (int i = 0; i <= 1500; i += 250) {
             double x = 50 + (i / 1500.0) * (canvasWidth - 100);
+            gc.setLineWidth(1.5);
             gc.strokeLine(x, canvasHeight - 50, x, canvasHeight - 40);
-            gc.fillText(String.valueOf(i), x - 10, canvasHeight - 25);
+            gc.fillText(String.valueOf(i), x - 15, canvasHeight - 25);
+        }
+        
+        // 次刻度 - 每50个磁道一个小刻度
+        gc.setLineWidth(0.5);
+        for (int i = 50; i < 1500; i += 50) {
+            if (i % 250 != 0) { // 避免与主刻度重复
+                double x = 50 + (i / 1500.0) * (canvasWidth - 100);
+                gc.strokeLine(x, canvasHeight - 50, x, canvasHeight - 45);
+            }
+        }
+        
+        // 添加网格线以便更好地读取数据
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.setLineWidth(0.3);
+        
+        // 水平网格线
+        for (int i = 0; i <= 1500; i += 250) {
+            double x = 50 + (i / 1500.0) * (canvasWidth - 100);
+            gc.strokeLine(x, 50, x, canvasHeight - 50);
+        }
+        
+        // 垂直网格线 - 根据画布高度均匀分布
+        int verticalLines = 10;
+        for (int i = 1; i < verticalLines; i++) {
+            double y = 50 + (i * (canvasHeight - 100) / verticalLines);
+            gc.strokeLine(50, y, canvasWidth - 50, y);
         }
     }
     
@@ -457,9 +490,11 @@ public class DiskSchedulingController {
     
     private void drawStatistics(GraphicsContext gc, SchedulingResult result) {
         gc.setFill(Color.BLACK);
-        gc.fillText("算法: " + result.getAlgorithmName(), 60, 30);
-        gc.fillText("总寻道距离: " + result.getTotalSeekDistance(), 200, 30);
-        gc.fillText("平均寻道时间: " + String.format("%.2f", result.getAverageSeekTime()), 380, 30);
+        // 将统计信息移到画布右上角，并调整间距
+        double canvasWidth = visualizationCanvas.getWidth();
+        gc.fillText("算法: " + result.getAlgorithmName(), canvasWidth - 400, 30);
+        gc.fillText("总寻道距离: " + result.getTotalSeekDistance(), canvasWidth - 400, 50);
+        gc.fillText("平均寻道时间: " + String.format("%.2f", result.getAverageSeekTime()), canvasWidth - 400, 70);
     }
     
     private void addResultToTable(SchedulingResult result) {

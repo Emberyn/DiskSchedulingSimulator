@@ -40,7 +40,7 @@
             <VBox spacing="10.0">
                <children>
                   <Label text="可视化结果" styleClass="section-title" />
-                  <Canvas fx:id="visualizationCanvas" height="400.0" width="500.0" />
+                  <Canvas fx:id="visualizationCanvas" height="500.0" width="650.0" />
                   <!-- 添加动画控制区域 -->
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
