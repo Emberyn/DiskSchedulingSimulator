@@ -1,5 +1,7 @@
 package org.example.diskschedulingsimulator;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,16 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-
-// 确保这些导入存在且没有错误
-import org.example.diskschedulingsimulator.DiskRequest; 
-import org.example.diskschedulingsimulator.RequestGenerator;
-import org.example.diskschedulingsimulator.DiskSchedulingAlgorithm;
-import org.example.diskschedulingsimulator.FCFSAlgorithm;
-import org.example.diskschedulingsimulator.SSTFAlgorithm;
-import org.example.diskschedulingsimulator.SCANAlgorithm;
-import org.example.diskschedulingsimulator.CSCANAlgorithm;
-import org.example.diskschedulingsimulator.SchedulingResult;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +22,6 @@ public class DiskSchedulingController {
     @FXML private TextField initialPositionField;
     @FXML private Button generateButton;
     @FXML private Button simulateButton;
-    @FXML private Button simulateAllButton;
-    @FXML private Button resetButton;
     @FXML private ComboBox<String> algorithmComboBox;
     @FXML private Canvas visualizationCanvas;
     @FXML private TableView<SchedulingResult> resultsTable;
@@ -39,10 +30,19 @@ public class DiskSchedulingController {
     @FXML private TableColumn<SchedulingResult, Double> averageTimeColumn;
     @FXML private TextArea requestsTextArea;
     @FXML private Label statusLabel;
+    @FXML private Button playPauseButton;
+    @FXML private Button stepButton;
+    @FXML private Slider speedSlider;
     
     private List<DiskRequest> currentRequests;
     private int initialHeadPosition;
     private List<DiskSchedulingAlgorithm> algorithms;
+    
+    // 动画相关变量
+    private Timeline animationTimeline;
+    private int currentAnimationStep = 0;
+    private SchedulingResult currentResult;
+    private boolean animationPaused = true;
     
     @FXML
     public void initialize() {
@@ -51,6 +51,13 @@ public class DiskSchedulingController {
         setupComboBox();
         initialPositionField.setText("750");
         statusLabel.setText("就绪 - 点击生成请求开始");
+        
+        // 初始化动画控制
+        if (speedSlider != null) {
+            speedSlider.setMin(1);
+            speedSlider.setMax(10);
+            speedSlider.setValue(5);
+        }
     }
     
     private void setupAlgorithms() {
@@ -135,13 +142,178 @@ public class DiskSchedulingController {
                 SchedulingResult result = finalAlgorithm.schedule(currentRequests, initialHeadPosition);
                 
                 Platform.runLater(() -> {
-                    visualizeResult(result);
+                    // 保存结果用于动画
+                    currentResult = result;
+                    currentAnimationStep = 0;
+                    
+                    // 初始化画布
+                    GraphicsContext gc = visualizationCanvas.getGraphicsContext2D();
+                    gc.clearRect(0, 0, visualizationCanvas.getWidth(), visualizationCanvas.getHeight());
+                    drawCoordinateSystem(gc);
+                    
+                    // 添加结果到表格
                     addResultToTable(result);
-                    statusLabel.setText("模拟完成 - " + selectedAlgorithm);
+                    
+                    // 准备动画控制
+                    prepareAnimation();
+                    
+                    statusLabel.setText("模拟完成 - 点击播放按钮开始动画");
                     simulateButton.setDisable(false);
+                    if (playPauseButton != null) {
+                        playPauseButton.setDisable(false);
+                    }
+                    if (stepButton != null) {
+                        stepButton.setDisable(false);
+                    }
                 });
             });
         }
+    }
+    
+    // 准备动画
+    private void prepareAnimation() {
+        if (animationTimeline != null) {
+            animationTimeline.stop();
+        }
+        
+        animationTimeline = new Timeline();
+        animationTimeline.setCycleCount(Timeline.INDEFINITE);
+        
+        // 根据速度滑块设置动画速度
+        double speed = speedSlider != null ? speedSlider.getValue() : 5.0;
+        Duration duration = Duration.millis(1000.0 / speed);
+        
+        KeyFrame keyFrame = new KeyFrame(duration, event -> {
+            if (currentResult != null && currentAnimationStep < currentResult.getSeekSequence().size()) {
+                drawTrajectoryToStep(currentAnimationStep);
+                currentAnimationStep++;
+                
+                // 动画结束时显示统计信息
+                if (currentAnimationStep >= currentResult.getSeekSequence().size()) {
+                    drawStatistics(visualizationCanvas.getGraphicsContext2D(), currentResult);
+                    animationTimeline.stop();
+                    if (playPauseButton != null) {
+                        playPauseButton.setText("播放");
+                    }
+                    animationPaused = true;
+                }
+            }
+        });
+        
+        animationTimeline.getKeyFrames().add(keyFrame);
+        animationPaused = true;
+    }
+    
+    // 绘制到特定步骤
+    private void drawTrajectoryToStep(int step) {
+        if (currentResult == null || step < 0) return;
+        
+        List<Integer> sequence = currentResult.getSeekSequence();
+        if (sequence.isEmpty()) return;
+        
+        GraphicsContext gc = visualizationCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, visualizationCanvas.getWidth(), visualizationCanvas.getHeight());
+        drawCoordinateSystem(gc);
+        
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(2);
+        
+        double canvasWidth = visualizationCanvas.getWidth();
+        double canvasHeight = visualizationCanvas.getHeight();
+        
+        // 绘制已完成的轨迹
+        int maxStep = Math.min(step + 1, sequence.size());
+        for (int i = 0; i < maxStep - 1; i++) {
+            double x1 = 50 + (sequence.get(i) / 1500.0) * (canvasWidth - 100);
+            double y1 = canvasHeight - 100 - (i / (double)(sequence.size() - 1)) * (canvasHeight - 150);
+            
+            double x2 = 50 + (sequence.get(i + 1) / 1500.0) * (canvasWidth - 100);
+            double y2 = canvasHeight - 100 - ((i + 1) / (double)(sequence.size() - 1)) * (canvasHeight - 150);
+            
+            gc.strokeLine(x1, y1, x2, y2);
+            
+            gc.setFill(Color.RED);
+            gc.fillOval(x1 - 2, y1 - 2, 4, 4);
+        }
+        
+        // 绘制当前点
+        if (maxStep > 0 && maxStep <= sequence.size()) {
+            double x = 50 + (sequence.get(maxStep - 1) / 1500.0) * (canvasWidth - 100);
+            double y = canvasHeight - 100 - ((maxStep - 1) / (double)(sequence.size() - 1)) * (canvasHeight - 150);
+            gc.setFill(Color.RED);
+            gc.fillOval(x - 3, y - 3, 6, 6);
+        }
+        
+        // 显示当前步骤信息
+        gc.setFill(Color.BLACK);
+        gc.fillText("算法: " + currentResult.getAlgorithmName(), 60, 30);
+        gc.fillText("当前步骤: " + maxStep + "/" + sequence.size(), 200, 30);
+        
+        // 如果是最后一步，显示完整统计信息
+        if (maxStep >= sequence.size()) {
+            drawStatistics(gc, currentResult);
+        }
+    }
+    
+    // 播放/暂停动画
+    @FXML
+    private void onPlayPause() {
+        if (currentResult == null) {
+            showAlert("错误", "请先模拟一个算法");
+            return;
+        }
+        
+        if (animationPaused) {
+            // 如果动画已结束，重新开始
+            if (currentAnimationStep >= currentResult.getSeekSequence().size()) {
+                currentAnimationStep = 0;
+            }
+            
+            // 更新动画速度
+            if (animationTimeline != null) {
+                animationTimeline.stop();
+                prepareAnimation();
+            }
+            
+            animationTimeline.play();
+            animationPaused = false;
+            if (playPauseButton != null) {
+                playPauseButton.setText("暂停");
+            }
+        } else {
+            animationTimeline.pause();
+            animationPaused = true;
+            if (playPauseButton != null) {
+                playPauseButton.setText("播放");
+            }
+        }
+    }
+    
+    // 单步执行动画
+    @FXML
+    private void onStep() {
+        if (currentResult == null) {
+            showAlert("错误", "请先模拟一个算法");
+            return;
+        }
+        
+        // 暂停当前动画
+        if (animationTimeline != null && !animationPaused) {
+            animationTimeline.pause();
+            animationPaused = true;
+            if (playPauseButton != null) {
+                playPauseButton.setText("播放");
+            }
+        }
+        
+        // 如果动画已结束，重新开始
+        if (currentAnimationStep >= currentResult.getSeekSequence().size()) {
+            currentAnimationStep = 0;
+        }
+        
+        // 绘制下一步
+        drawTrajectoryToStep(currentAnimationStep);
+        currentAnimationStep++;
     }
     
     @FXML
@@ -259,7 +431,14 @@ public class DiskSchedulingController {
     
     @FXML
     private void onReset() {
+        // 停止动画
+        if (animationTimeline != null) {
+            animationTimeline.stop();
+        }
+        
         currentRequests = null;
+        currentResult = null;
+        currentAnimationStep = 0;
         requestsTextArea.clear();
         
         if (visualizationCanvas != null) {
@@ -276,8 +455,19 @@ public class DiskSchedulingController {
         simulateButton.setDisable(true);
         generateButton.setDisable(false);
         
+        if (playPauseButton != null) {
+            playPauseButton.setDisable(true);
+            playPauseButton.setText("播放");
+        }
+        
+        if (stepButton != null) {
+            stepButton.setDisable(true);
+        }
+        
         if (algorithmComboBox != null && !algorithmComboBox.getItems().isEmpty()) {
             algorithmComboBox.getSelectionModel().selectFirst();
         }
+        
+        animationPaused = true;
     }
 }
