@@ -70,9 +70,29 @@
     -fx-background-color: transparent;
 }
 
+/* 快速预览按钮特殊样式 */
+#quickPreviewButton {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+}
+
+#quickPreviewButton:hover {
+    -fx-background-color: #d35400;
+}
+
+#quickPreviewButton:disabled {
+    -fx-background-color: #bdc3c7;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* 改进文本区域的可读性 */
 .requests-text-area {
-    -fx-font-family: monospace;
+    -fx-font-family: "Consolas", "Courier New", monospace;
     -fx-font-size: 11px;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4;
+    -fx-padding: 8;
 }
 
 .requests-text-area .content {

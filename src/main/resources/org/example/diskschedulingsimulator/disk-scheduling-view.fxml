@@ -20,6 +20,7 @@
                   <Label text="选择算法:" />
                   <ComboBox fx:id="algorithmComboBox" prefWidth="150.0" />
                   <Button fx:id="simulateButton" disable="true" onAction="#onSimulate" text="开始模拟" />
+                  <Button fx:id="quickPreviewButton" disable="true" onAction="#onQuickPreview" text="快速预览" />
                   <Button fx:id="simulateAllButton" onAction="#onSimulateAll" text="模拟所有" />
                   <Button fx:id="resetButton" onAction="#onReset" text="重置" />
                </children>
