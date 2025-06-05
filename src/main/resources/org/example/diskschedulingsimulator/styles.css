@@ -1,145 +1,227 @@
+/* 设置根节点的样式 */
 .root {
+    /* 设置字体为微软雅黑，如果不支持则使用 Arial 或 sans-serif */
     -fx-font-family: "Microsoft YaHei", Arial, sans-serif;
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #f8f9fa;
+    /* 设置字体大小为 12 像素 */
     -fx-font-size: 12px;
 }
 
+/* 设置标题标签的样式 */
 .title-label {
+    /* 设置字体大小为 20 像素 */
     -fx-font-size: 20px;
+    /* 设置字体加粗 */
     -fx-font-weight: bold;
+    /* 设置文本颜色为深灰色 */
     -fx-text-fill: #2c3e50;
 }
 
+/* 设置部分标题的样式 */
 .section-title {
+    /* 设置字体大小为 14 像素 */
     -fx-font-size: 14px;
+    /* 设置字体加粗 */
     -fx-font-weight: bold;
+    /* 设置文本颜色为灰色 */
     -fx-text-fill: #34495e;
 }
 
+/* 设置状态标签的样式 */
 .status-label {
+    /* 设置字体大小为 12 像素 */
     -fx-font-size: 12px;
+    /* 设置文本颜色为绿色 */
     -fx-text-fill: #27ae60;
 }
 
+/* 设置按钮的样式 */
 .button {
+    /* 设置背景颜色为蓝色 */
     -fx-background-color: #3498db;
+    /* 设置文本颜色为白色 */
     -fx-text-fill: white;
+    /* 设置背景圆角为 3 像素 */
     -fx-background-radius: 3;
+    /* 设置内边距 */
     -fx-padding: 6 12 6 12;
+    /* 设置鼠标指针为手型 */
     -fx-cursor: hand;
 }
 
+/* 设置按钮鼠标悬停时的样式 */
 .button:hover {
+    /* 设置背景颜色为深蓝色 */
     -fx-background-color: #2980b9;
 }
 
+/* 设置按钮禁用时的样式 */
 .button:disabled {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #bdc3c7;
+    /* 设置文本颜色为深灰色 */
     -fx-text-fill: #7f8c8d;
 }
 
+/* 设置文本输入框和下拉框的样式 */
 .text-field, .combo-box {
+    /* 设置背景颜色为白色 */
     -fx-background-color: white;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #bdc3c7;
+    /* 设置边框圆角为 3 像素 */
     -fx-border-radius: 3;
+    /* 设置内边距 */
     -fx-padding: 4;
 }
 
+/* 设置文本输入框和下拉框获取焦点时的样式 */
 .text-field:focused, .combo-box:focused {
+    /* 设置边框颜色为蓝色 */
     -fx-border-color: #3498db;
 }
 
+/* 设置文本区域的样式 */
 .text-area {
+    /* 设置背景颜色为白色 */
     -fx-background-color: white;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #bdc3c7;
+    /* 设置边框圆角为 3 像素 */
     -fx-border-radius: 3;
 }
 
+/* 设置表格视图的样式 */
 .table-view {
+    /* 设置背景颜色为白色 */
     -fx-background-color: white;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #bdc3c7;
+    /* 设置边框圆角为 3 像素 */
     -fx-border-radius: 3;
 }
 
+/* 设置表格列标题的样式 */
 .table-view .column-header {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #ecf0f1;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #bdc3c7;
 }
 
+/* 设置分割面板的样式 */
 .split-pane {
+    /* 设置背景颜色为透明 */
     -fx-background-color: transparent;
 }
 
 /* 快速预览按钮特殊样式 */
 #quickPreviewButton {
+    /* 设置背景颜色为橙色 */
     -fx-background-color: #e67e22;
+    /* 设置文本颜色为白色 */
     -fx-text-fill: white;
 }
 
+/* 快速预览按钮鼠标悬停时的样式 */
 #quickPreviewButton:hover {
+    /* 设置背景颜色为深橙色 */
     -fx-background-color: #d35400;
 }
 
+/* 快速预览按钮禁用时的样式 */
 #quickPreviewButton:disabled {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #bdc3c7;
+    /* 设置文本颜色为深灰色 */
     -fx-text-fill: #7f8c8d;
 }
 
 /* 改进文本区域的可读性 */
 .requests-text-area {
+    /* 设置字体为 Consolas 或 Courier New 等宽字体 */
     -fx-font-family: "Consolas", "Courier New", monospace;
+    /* 设置字体大小为 11 像素 */
     -fx-font-size: 11px;
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #f8f9fa;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #dee2e6;
+    /* 设置边框圆角为 4 像素 */
     -fx-border-radius: 4;
+    /* 设置内边距 */
     -fx-padding: 8;
 }
 
+/* 设置文本区域内容的样式 */
 .requests-text-area .content {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #f8f8f8;
 }
 
-
 /* 选项卡样式 */
 .tab-pane .tab-header-area .tab-header-background {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #f8f9fa;
+    /* 设置边框颜色为浅灰色 */
     -fx-border-color: #bdc3c7;
+    /* 设置边框宽度，只显示底部边框 */
     -fx-border-width: 0 0 1 0;
 }
 
+/* 设置选项卡的样式 */
 .tab-pane .tab {
+    /* 设置背景颜色为浅灰色 */
     -fx-background-color: #ecf0f1;
+    /* 设置背景圆角，只圆角顶部 */
     -fx-background-radius: 5 5 0 0;
 }
 
+/* 设置选中选项卡的样式 */
 .tab-pane .tab:selected {
+    /* 设置背景颜色为白色 */
     -fx-background-color: white;
 }
 
+/* 设置选项卡标签的样式 */
 .tab-pane .tab .tab-label {
+    /* 设置文本颜色为灰色 */
     -fx-text-fill: #34495e;
+    /* 设置字体为正常粗细 */
     -fx-font-weight: normal;
 }
 
+/* 设置选中选项卡标签的样式 */
 .tab-pane .tab:selected .tab-label {
+    /* 设置字体加粗 */
     -fx-font-weight: bold;
 }
 
 /* 美化滑块 */
 .slider .track {
+    /* 设置滑块轨道的背景颜色为浅灰色 */
     -fx-background-color: #ecf0f1;
+    /* 设置滑块轨道的背景圆角为 5 像素 */
     -fx-background-radius: 5;
 }
 
+/* 美化滑块的拇指（拖动部分） */
 .slider .thumb {
+    /* 设置滑块拇指的背景颜色为蓝色 */
     -fx-background-color: #3498db;
+    /* 设置滑块拇指的背景圆角为 10 像素 */
     -fx-background-radius: 10;
 }
 
-/* 美化Canvas容器 */
+/* 美化 Canvas 容器 */
 .canvas-container {
+    /* 设置 Canvas 容器的背景颜色为白色 */
     -fx-background-color: white;
+    /* 设置 Canvas 容器的背景圆角为 5 像素 */
     -fx-background-radius: 5;
+    /* 设置阴影效果，增加立体感 */
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    /* 设置内边距 */
     -fx-padding: 10;
 }
