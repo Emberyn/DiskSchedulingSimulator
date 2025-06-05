@@ -68,6 +68,11 @@ public class DiskSchedulingController {
             speedSlider.setMin(1);       // 设置滑块最小值（最慢速度）
             speedSlider.setMax(100);      // 设置滑块最大值（最快速度）
             speedSlider.setValue(50);     // 设置默认速度
+            
+            // 添加监听器，当滑块值变化时更新动画速度
+            speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateAnimationSpeed();
+            });
         }
     }
 
@@ -582,43 +587,35 @@ public class DiskSchedulingController {
         // 清空文本区域
         requestsTextArea.clear();
 
-        // 清空画布
-        if (visualizationCanvas != null) {
-            GraphicsContext gc = visualizationCanvas.getGraphicsContext2D();
-            gc.clearRect(0, 0, visualizationCanvas.getWidth(), visualizationCanvas.getHeight());
-        }
-
-        // 清空结果表格
-        if (resultsTable != null) {
-            resultsTable.getItems().clear();
-        }
-
-        // 重置输入和状态标签
-        initialPositionField.setText("750");
-        statusLabel.setText("已重置 - 点击生成请求开始");
-
-        // 重置按钮状态
-        simulateButton.setDisable(true);
-        generateButton.setDisable(false);
-
-        if (quickPreviewButton != null) {
-            quickPreviewButton.setDisable(true);
-        }
-
-        if (playPauseButton != null) {
-            playPauseButton.setDisable(true);
-            playPauseButton.setText("播放");
-        }
-
-        if (stepButton != null) {
-            stepButton.setDisable(true);
-        }
-
         // 重置算法选择
         if (algorithmComboBox != null && !algorithmComboBox.getItems().isEmpty()) {
             algorithmComboBox.getSelectionModel().selectFirst();
         }
 
         animationPaused = true;  // 确保动画处于暂停状态
+    }
+    
+    // 添加新方法：更新动画速度
+    private void updateAnimationSpeed() {
+        if (animationTimeline != null) {
+            // 获取当前滑块值
+            double speed = speedSlider.getValue();
+            // 计算新的帧持续时间
+            Duration duration = Duration.millis(1000.0 / speed);
+            
+            // 更新动画时间线的帧率
+            KeyFrame keyFrame = animationTimeline.getKeyFrames().get(0);
+            animationTimeline.stop();
+            animationTimeline.getKeyFrames().clear();
+            
+            // 创建新的关键帧，保持原有的事件处理逻辑
+            KeyFrame newKeyFrame = new KeyFrame(duration, keyFrame.getOnFinished());
+            animationTimeline.getKeyFrames().add(newKeyFrame);
+            
+            // 如果动画正在播放，则继续播放
+            if (!animationPaused) {
+                animationTimeline.play();
+            }
+        }
     }
 }
