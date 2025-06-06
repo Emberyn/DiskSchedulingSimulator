@@ -60,14 +60,14 @@ public class DiskSchedulingController {
         setupAlgorithms();           // 初始化支持的算法列表
         setupTable();                // 设置结果表格
         setupComboBox();             // 设置算法选择下拉框
-        initialPositionField.setText("750");  // 设置默认初始磁头位置
-        statusLabel.setText("就绪 - 点击生成请求开始");  // 设置初始状态文本
+        initialPositionField.setText("750");
+        statusLabel.setText("就绪 - 点击生成请求开始");
 
         // 初始化动画速度控制
         if (speedSlider != null) {
-            speedSlider.setMin(1);       // 设置滑块最小值（最慢速度）
-            speedSlider.setMax(100);      // 设置滑块最大值（最快速度）
-            speedSlider.setValue(50);     // 设置默认速度
+            speedSlider.setMin(1);
+            speedSlider.setMax(100);
+            speedSlider.setValue(50);
             
             // 添加监听器，当滑块值变化时更新动画速度
             speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -82,10 +82,10 @@ public class DiskSchedulingController {
      */
     private void setupAlgorithms() {
         algorithms = new ArrayList<>();
-        algorithms.add(new FCFSAlgorithm());    // 先来先服务算法
-        algorithms.add(new SSTFAlgorithm());    // 最短寻道时间优先算法
-        algorithms.add(new SCANAlgorithm());    // 扫描算法（电梯算法）
-        algorithms.add(new CSCANAlgorithm());   // 循环扫描算法
+        algorithms.add(new FCFSAlgorithm());
+        algorithms.add(new SSTFAlgorithm());
+        algorithms.add(new SCANAlgorithm());
+        algorithms.add(new CSCANAlgorithm());
     }
 
     /**
@@ -93,11 +93,8 @@ public class DiskSchedulingController {
      * 将表格列与SchedulingResult对象的属性绑定
      */
     private void setupTable() {
-        // 将算法名列与SchedulingResult的algorithmName属性绑定
         algorithmColumn.setCellValueFactory(new PropertyValueFactory<>("algorithmName"));
-        // 将总寻道距离列与SchedulingResult的totalSeekDistance属性绑定
         totalDistanceColumn.setCellValueFactory(new PropertyValueFactory<>("totalSeekDistance"));
-        // 将平均寻道时间列与SchedulingResult的averageSeekTime属性绑定
         averageTimeColumn.setCellValueFactory(new PropertyValueFactory<>("averageSeekTime"));
         resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
@@ -109,13 +106,12 @@ public class DiskSchedulingController {
     private void setupComboBox() {
         ObservableList<String> algorithmNames = FXCollections.observableArrayList();
 
-        // 将所有算法的名称添加到下拉框选项中
         for (DiskSchedulingAlgorithm algorithm : algorithms) {
             algorithmNames.add(algorithm.getAlgorithmName());
         }
 
-        algorithmComboBox.setItems(algorithmNames);  // 设置下拉框选项
-        algorithmComboBox.getSelectionModel().selectFirst();  // 选择第一个算法
+        algorithmComboBox.setItems(algorithmNames);
+        algorithmComboBox.getSelectionModel().selectFirst();
     }
 
     /**
@@ -138,9 +134,9 @@ public class DiskSchedulingController {
             currentRequests = RequestGenerator.generateRequests();
 
             // 统计不同范围的请求数量
-            int range1Count = 0; // 0-499范围的请求数
-            int range2Count = 0; // 500-999范围的请求数
-            int range3Count = 0; // 1000-1499范围的请求数
+            int range1Count = 0;
+            int range2Count = 0;
+            int range3Count = 0;
 
             // 遍历请求列表，统计各范围的请求数
             for (DiskRequest request : currentRequests) {
@@ -268,7 +264,7 @@ public class DiskSchedulingController {
 
         if (algorithm != null) {
             statusLabel.setText("正在模拟 " + selectedAlgorithm + "...");
-            simulateButton.setDisable(true);  // 禁用模拟按钮防止重复点击
+            simulateButton.setDisable(true);
 
             // 使用CompletableFuture在后台线程执行算法，避免阻塞UI
             DiskSchedulingAlgorithm finalAlgorithm = algorithm;
@@ -284,7 +280,7 @@ public class DiskSchedulingController {
                     // 初始化画布
                     GraphicsContext gc = visualizationCanvas.getGraphicsContext2D();
                     gc.clearRect(0, 0, visualizationCanvas.getWidth(), visualizationCanvas.getHeight());
-                    drawCoordinateSystem(gc);  // 绘制坐标系
+                    drawCoordinateSystem(gc);
 
                     // 将结果添加到表格中
                     addResultToTable(result);
@@ -361,8 +357,8 @@ public class DiskSchedulingController {
         gc.clearRect(0, 0, visualizationCanvas.getWidth(), visualizationCanvas.getHeight());
         drawCoordinateSystem(gc);  // 绘制坐标系
 
-        gc.setStroke(Color.BLUE);  // 设置轨迹线颜色
-        gc.setLineWidth(2);        // 设置轨迹线宽度
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(2);
 
         double canvasWidth = visualizationCanvas.getWidth();
         double canvasHeight = visualizationCanvas.getHeight();
@@ -539,13 +535,13 @@ public class DiskSchedulingController {
         if (animationTimeline == null) return;
 
         if (animationPaused) {
-            animationTimeline.play();  // 开始播放动画
-            playPauseButton.setText("暂停");  // 更新按钮文本
+            animationTimeline.play();
+            playPauseButton.setText("暂停");
         } else {
-            animationTimeline.pause();  // 暂停动画
-            playPauseButton.setText("播放");  // 更新按钮文本
+            animationTimeline.pause();
+            playPauseButton.setText("播放");
         }
-        animationPaused = !animationPaused;  // 切换暂停状态
+        animationPaused = !animationPaused;
     }
 
     /**
@@ -598,9 +594,7 @@ public class DiskSchedulingController {
     // 添加新方法：更新动画速度
     private void updateAnimationSpeed() {
         if (animationTimeline != null) {
-            // 获取当前滑块值
             double speed = speedSlider.getValue();
-            // 计算新的帧持续时间
             Duration duration = Duration.millis(1000.0 / speed);
             
             // 更新动画时间线的帧率

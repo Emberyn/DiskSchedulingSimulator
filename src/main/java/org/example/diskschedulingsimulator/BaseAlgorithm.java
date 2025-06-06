@@ -9,9 +9,6 @@ import java.util.List;
  */
 public abstract class BaseAlgorithm implements DiskSchedulingAlgorithm {
     /**
-     * 创建调度结果对象。
-     * 该方法会计算平均寻道时间，并使用传入的参数创建 SchedulingResult 对象。
-     *
      * @param seekSequence      寻道序列
      * @param totalSeekDistance 总寻道距离
      * @param requests          磁盘请求列表
@@ -31,7 +28,6 @@ public abstract class BaseAlgorithm implements DiskSchedulingAlgorithm {
 
     /**
      * 初始化寻道序列。
-     * 该方法会创建一个新的列表，并将初始磁头位置添加到列表中。
      * @param initialHeadPosition 初始磁头位置
      * @return 包含初始磁头位置的寻道序列列表
      */
